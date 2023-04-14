@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "appium-base-driver": "^7.11.3"
+  }
+}

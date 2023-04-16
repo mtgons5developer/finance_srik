@@ -1,2 +1,2 @@
 .env
-nyt_articles.json
+*.json

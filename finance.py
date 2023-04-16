@@ -2,6 +2,7 @@ import requests
 import json
 import os
 import time
+import openai
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,14 +12,23 @@ load_dotenv()
 api_key = os.getenv('NYT_API_KEY')
 api_key2 = os.getenv('G_API_KEY')
 api_key3 = os.getenv('NEWS_API_KEY')
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
-# params = {
-#     "q": "tesla",
-#     "api-key": api_key
-# }
+def openAI():
 
-# response = requests.get(url, params=params)
+    test = openai.Completion.create(
+    model="text-davinci-003",
+    prompt="Elon Musk, the chief executive of Tesla, announced on Twitter on Sunday that his company would build a factory in Shanghai with the aim to assemble 10,000 giant batteries annually for electric producers and distributors."
+    )
+
+    # test = openai.Completion.create(
+    # model="text-davinci-003",
+    # prompt="Say this is a test",
+    # max_tokens=7,
+    # temperature=0
+    # )
+    # Elon Musk, the chief executive of Tesla, announced on Twitter on Sunday that his company would build a factory in Shanghai with the aim to assemble 10,000 giant batteries annually for electric producers and distributors.
+    print(test)
 
 def newsAPI():
 
@@ -117,6 +127,9 @@ def nyt():
 
 def ms():
 
+    chrome_driver_path = '/chromedriver2'
+    driver = webdriver.Chrome(executable_path=chrome_driver_path)
+
     driver = webdriver.Chrome() # or other webdriver
     driver.get("https://www.morningstar.com/stocks/xnas/tsla/financials")
 
@@ -128,17 +141,17 @@ def ms():
     time.sleep(10)
 
     # Get the path of the downloaded file in your default downloads folder
-    default_downloads_path = os.path.expanduser("~/Downloads")
+    default_downloads_path = os.path.expanduser("")
     downloaded_file = max([os.path.join(default_downloads_path, f) for f in os.listdir(default_downloads_path)], key=os.path.getctime)
 
     # Move the file to a new location
-    new_location = "/path/to/new/location"
+    new_location = ""
     new_file_name = "tsla_financials.csv"
     new_file_path = os.path.join(new_location, new_file_name)
     os.rename(downloaded_file, new_file_path)
 
-
-ms()
+openAI()
+# ms()
 # nyt()
 # guardian()
 # newsAPI()

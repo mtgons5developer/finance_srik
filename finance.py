@@ -15,20 +15,27 @@ api_key3 = os.getenv('NEWS_API_KEY')
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def openAI():
-
-    test = openai.Completion.create(
-    model="text-davinci-003",
-    prompt="Elon Musk, the chief executive of Tesla, announced on Twitter on Sunday that his company would build a factory in Shanghai with the aim to assemble 10,000 giant batteries annually for electric producers and distributors."
-    )
-
-    # test = openai.Completion.create(
+    question = "Decide whether a News sentiment is positive, neutral, or negative. News: "
+    message = "Elon Musk, the chief executive of Tesla, announced on Twitter on Sunday that his company would build a factory in Shanghai with the aim to assemble 10,000 giant batteries annually for electric producers and distributors."
+    # summarize = openai.Completion.create(
     # model="text-davinci-003",
-    # prompt="Say this is a test",
+    # prompt=message,
     # max_tokens=7,
     # temperature=0
     # )
-    # Elon Musk, the chief executive of Tesla, announced on Twitter on Sunday that his company would build a factory in Shanghai with the aim to assemble 10,000 giant batteries annually for electric producers and distributors.
-    print(test)
+    # print(summarize)
+
+    sentiment = openai.Completion.create(
+    model="text-davinci-003",
+    prompt=question + message,
+    temperature=0,
+    max_tokens=60,
+    top_p=1,
+    frequency_penalty=0.5,
+    presence_penalty=0
+    )
+    print(sentiment)
+    print(question + message)
 
 def newsAPI():
 

@@ -9,28 +9,60 @@ api_key = os.getenv('NYT_API_KEY')
 api_key2 = os.getenv('G_API_KEY')
 api_key3 = os.getenv('NEWS_API_KEY')
 
+# url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
+# params = {
+#     "q": "tesla",
+#     "api-key": api_key
+# }
+
+# response = requests.get(url, params=params)
+
 def newsAPI():
 
-    url = "https://newsapi.org/v2/everything?q=TESLA&from=2023-04-01&sortBy=popularity&apiKey=9eb27be823e446e49225ba3cef280e60"
+    base_url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": "TESLA",
+        "from": "2023-04-01",
+        "sortBy": "popularity",
+        "apiKey": api_key3
+    }
 
-    # https://newsapi.org/docs/get-started
-
-    response = requests.get(url)
-    data = response.json()
-
-    with open("tesla_news.json", "w") as file:
-        json.dump(data["articles"], file, indent=4)
-
-def guardian():
-    url = "https://content.guardianapis.com/search?page=2&q=tesla&api-key=0ba289a8-884e-4fbb-af88-bd5b409cbcae"
-
-    response = requests.get(url)
+    response = requests.get(base_url, params=params)
     data = response.json()
 
     # Extract the fields of interest from each article
     articles = []
+    for article in data["articles"]:
+        article_data = {
+            "author": article["author"],
+            "title": article["title"],
+            "description": article["description"],
+            "url": article["url"],
+            "urlToImage": article["urlToImage"],
+            "publishedAt": article["publishedAt"],
+            "content": article["content"]
+        }
+        articles.append(article_data)
+
+    # Save the extracted data to a JSON file
+    with open("newsapi.json", "w") as file:
+        json.dump(articles, file, indent=4)
+
+def guardian():
+    base_url = "https://content.guardianapis.com/search"
+    params = {
+        "page": "2",
+        "q": "tesla",
+        "api-key": api_key2
+    }
+
+    response = requests.get(base_url, params=params)
+    data = response.json()
+
+    # Extract the fields of interest from each result
+    results = []
     for result in data["response"]["results"]:
-        article = {
+        result_data = {
             "id": result["id"],
             "type": result["type"],
             "sectionId": result["sectionId"],
@@ -43,9 +75,11 @@ def guardian():
             "pillarId": result["pillarId"],
             "pillarName": result["pillarName"]
         }
-        articles.append(article)
-    with open(os.path.join(os.getcwd(), "guardian_tesla_fields.json"), "w") as f: #nyt_articles.json filename to save parsed data
-        json.dump(articles, f, indent=4)
+        results.append(result_data)
+
+    # Save the extracted data to a JSON file
+    with open("guardian.json", "w") as file:
+        json.dump(results, file, indent=4)
 
 def nyt():
     url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
@@ -73,7 +107,7 @@ def nyt():
                 "section_name": article.get("section_name", "")
             }
             parsed_data.append(parsed_article)
-        with open(os.path.join(os.getcwd(), "nyt_articles.json"), "w") as f: #nyt_articles.json filename to save parsed data
+        with open(os.path.join(os.getcwd(), "nyt.json"), "w") as f: #nyt_articles.json filename to save parsed data
             json.dump(parsed_data, f, indent=4)
     else:
         print("Error: Could not retrieve articles.")

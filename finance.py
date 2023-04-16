@@ -1,7 +1,10 @@
 import requests
 import json
 import os
+import time
 from dotenv import load_dotenv
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 load_dotenv()
 
@@ -112,9 +115,30 @@ def nyt():
     else:
         print("Error: Could not retrieve articles.")
 
-nyt()
-guardian()
-newsAPI()
+def ms():
 
-# abstract, web_url, snippet, lead_paragraph, source, pub_date, document_type, news_desk, section_name
-# https://content.guardianapis.com/search?page=2&q=tesla&api-key=0ba289a8-884e-4fbb-af88-bd5b409cbcae
+    driver = webdriver.Chrome() # or other webdriver
+    driver.get("https://www.morningstar.com/stocks/xnas/tsla/financials")
+
+    # Wait for the Export Data button to be clickable
+    export_button = driver.find_element(By.XPATH, "//a[@class='export-data ']")
+    export_button.click()
+
+    # Wait for the file to download (adjust sleep time as needed)
+    time.sleep(10)
+
+    # Get the path of the downloaded file in your default downloads folder
+    default_downloads_path = os.path.expanduser("~/Downloads")
+    downloaded_file = max([os.path.join(default_downloads_path, f) for f in os.listdir(default_downloads_path)], key=os.path.getctime)
+
+    # Move the file to a new location
+    new_location = "/path/to/new/location"
+    new_file_name = "tsla_financials.csv"
+    new_file_path = os.path.join(new_location, new_file_name)
+    os.rename(downloaded_file, new_file_path)
+
+
+ms()
+# nyt()
+# guardian()
+# newsAPI()
